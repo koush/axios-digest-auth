@@ -68,6 +68,8 @@ export default class AxiosDigestAuth {
       // const nonce = authDetails.find((el: any) => el[0].toLowerCase().indexOf("nonce") > -1)[1].replace(/"/g, '');
       const nonce = takeFirst(parsedAuthorization.params['nonce']);
 
+      const opaque = takeFirst(parsedAuthorization.params['opaque']);
+
       const ha1 = crypto.createHash('md5').update(`${this.username}:${realm}:${this.password}`).digest('hex');
       const path = url.parse(opts.url!).pathname;
       const ha2 = crypto.createHash('md5').update(`${opts.method ?? "GET"}:${path}`).digest('hex');
@@ -79,17 +81,18 @@ export default class AxiosDigestAuth {
         realm,
         nonce,
         uri: path || '',
-        // qop: 'auth', 
+        // qop: 'auth',
         algorithm: 'MD5',
         response,
         // nc: nonceCount,
         cnonce,
       };
+      parsedAuthorization
 
       const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
 
       // Added unquoted params manually
-      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}, opaque=""`;
+      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}, opaque=${(opaque && quote(opaque)) || ""}`;
 
       if (opts.headers) {
         opts.headers["authorization"] = authorization;
