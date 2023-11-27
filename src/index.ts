@@ -85,7 +85,11 @@ export default class AxiosDigestAuth {
         cnonce,
       };
 
-      const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
+      // Hard code params to pick which ones need quotes or not
+      const paramsString = `username="${params.username}", realm="${params.realm}", nonce="${params.nonce}", uri="${params.uri}", cnonce="${params.cnonce}", nc=${params.nc}, qop=auth, response="${params.response}" opaque=""`;
+
+      // Can cause issues with devices with stick checks
+      // const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
       const authorization = `Digest ${paramsString}`;
 
       if (opts.headers) {
