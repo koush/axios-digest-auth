@@ -73,20 +73,23 @@ export default class AxiosDigestAuth {
       const ha2 = crypto.createHash('md5').update(`${opts.method ?? "GET"}:${path}`).digest('hex');
       const response = crypto.createHash('md5').update(`${ha1}:${nonce}:${nonceCount}:${cnonce}:auth:${ha2}`).digest('hex');
 
+      // removed params that shouldnt be quoted
       const params = {
         username: this.username,
         realm,
         nonce,
         uri: path || '',
-        qop: 'auth',
+        // qop: 'auth', 
         algorithm: 'MD5',
         response,
-        nc: nonceCount,
+        // nc: nonceCount,
         cnonce,
       };
 
       const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
-      const authorization = `Digest ${paramsString}`;
+
+      // Added unquoted params manually
+      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}, opaque=""`;
 
       if (opts.headers) {
         opts.headers["authorization"] = authorization;
