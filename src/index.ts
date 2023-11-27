@@ -68,7 +68,7 @@ export default class AxiosDigestAuth {
       // const nonce = authDetails.find((el: any) => el[0].toLowerCase().indexOf("nonce") > -1)[1].replace(/"/g, '');
       const nonce = takeFirst(parsedAuthorization.params['nonce']);
 
-      const opaque = takeFirst(parsedAuthorization.params['opaque']);
+      const opaque = takeFirst(parsedAuthorization.params['opaque'] || '');
 
       const ha1 = crypto.createHash('md5').update(`${this.username}:${realm}:${this.password}`).digest('hex');
       const path = url.parse(opts.url!).pathname;
