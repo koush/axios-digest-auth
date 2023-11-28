@@ -21,7 +21,7 @@ export interface AxiosDigestAuthOpts {
   username: string;
 }
 
-function takeFirst(value: string|string[]): string {
+function takeFirst(value: string | string[]): string {
   if (value.constructor === Array)
     return value[0];
   return value as string;
@@ -46,8 +46,8 @@ export default class AxiosDigestAuth {
       return await this.axios.request(opts);
     } catch (resp1: any) {
       if (resp1.response === undefined
-          || resp1.response.status !== 401
-          || !resp1.response.headers["www-authenticate"]?.includes('nonce')
+        || resp1.response.status !== 401
+        || !resp1.response.headers["www-authenticate"]?.includes('nonce')
       ) {
         throw resp1;
       }
@@ -68,7 +68,9 @@ export default class AxiosDigestAuth {
       // const nonce = authDetails.find((el: any) => el[0].toLowerCase().indexOf("nonce") > -1)[1].replace(/"/g, '');
       const nonce = takeFirst(parsedAuthorization.params['nonce']);
 
-      const opaque = parsedAuthorization.params['opaque'] != null && takeFirst(parsedAuthorization.params['opaque']);
+      const opaque = parsedAuthorization.params['opaque'] == null
+        ? undefined
+        : takeFirst(parsedAuthorization.params['opaque']);
 
       const ha1 = crypto.createHash('md5').update(`${this.username}:${realm}:${this.password}`).digest('hex');
       const path = url.parse(opts.url!).pathname;
@@ -90,7 +92,7 @@ export default class AxiosDigestAuth {
       };
       parsedAuthorization
 
-      const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value != null && quote(value)}`).join(', ');
+      const paramsString = Object.entries(params).map(([key, value]) => `${key}=${value != null && quote(value)}`).join(', ');
 
       // Added unquoted params manually
       const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}}`;
