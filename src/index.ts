@@ -68,7 +68,7 @@ export default class AxiosDigestAuth {
       // const nonce = authDetails.find((el: any) => el[0].toLowerCase().indexOf("nonce") > -1)[1].replace(/"/g, '');
       const nonce = takeFirst(parsedAuthorization.params['nonce']);
 
-      const opaque = takeFirst(parsedAuthorization.params['opaque'] || '');
+      const opaque = parsedAuthorization.params['opaque'] && takeFirst(parsedAuthorization.params['opaque']);
 
       const ha1 = crypto.createHash('md5').update(`${this.username}:${realm}:${this.password}`).digest('hex');
       const path = url.parse(opts.url!).pathname;
@@ -85,14 +85,15 @@ export default class AxiosDigestAuth {
         algorithm: 'MD5',
         response,
         // nc: nonceCount,
+        opaque,
         cnonce,
       };
       parsedAuthorization
 
-      const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
+      const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value != null && quote(value)}`).join(', ');
 
       // Added unquoted params manually
-      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}, opaque=${(opaque && quote(opaque)) || ""}`;
+      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}}`;
 
       if (opts.headers) {
         opts.headers["authorization"] = authorization;
