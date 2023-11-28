@@ -95,7 +95,7 @@ export default class AxiosDigestAuth {
       const paramsString = Object.entries(params).map(([key, value]) => `${key}=${value != null && quote(value)}`).join(', ');
 
       // Added unquoted params manually
-      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}}`;
+      const authorization = `Digest ${paramsString}, qop=auth, nc=${nonceCount}`;
 
       if (opts.headers) {
         opts.headers["authorization"] = authorization;
