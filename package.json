@@ -1,7 +1,7 @@
 {
   "name": "@koush/axios-digest-auth",
   "description": "axios-like http digest auth",
-  "version": "0.8.5",
+  "version": "0.8.7",
   "homepage": "https://github.com/mhoc/axios-digest-auth",
   "license": "MIT",
   "main": "./dist",
